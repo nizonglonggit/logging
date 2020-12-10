@@ -29,8 +29,9 @@ type Lumberjack struct {
 
 func init() {
 	// 解析配置文件
-	_, err := UnmarshalConfig("../docs/log.toml")
+	c, err := UnmarshalConfig("../docs/log.toml")
 	if err != nil {
 		panic(err)
 	}
+	Conf = c
 }
