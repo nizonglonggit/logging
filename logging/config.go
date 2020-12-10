@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"github.com/nizonglonggit/logging/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -131,28 +130,26 @@ func getWriter(level zapcore.Level, filename string) io.Writer {
 
 	lumber = &lumberjack.Logger{
 		Filename:   filename,
-		MaxSize:    config.Conf.Lumberjacks[level.String()].MaxSize,    // 最大M数，超过则切割
-		MaxBackups: config.Conf.Lumberjacks[level.String()].MaxBackups, // 最大文件保留数，超过就删除最老的日志文件
-		MaxAge:     config.Conf.Lumberjacks[level.String()].MaxAge,     // 保存30天
-		Compress:   config.Conf.Lumberjacks[level.String()].Compress,   // 是否压缩
+		MaxSize:    lumbMap[level.String()]["max_size"].(int),    // 最大M数，超过则切割
+		MaxBackups: lumbMap[level.String()]["max_backups"].(int), // 最大文件保留数，超过就删除最老的日志文件
+		MaxAge:     lumbMap[level.String()]["max_age"].(int),     // 保存30天
+		Compress:   lumbMap[level.String()]["compress"].(bool),   // 是否压缩
 	}
 
 	if MaxSize > 0 {
 		lumber.MaxSize = MaxSize
-	} else {
-		lumber.MaxSize = config.Conf.Lumberjacks[level.String()].MaxSize
 	}
 
 	if MaxBackups > 0 {
-		lumber.MaxBackups = config.Conf.Lumberjacks[level.String()].MaxBackups
+		lumber.MaxBackups = MaxBackups
 	}
 
 	if MaxAge > 0 {
-		lumber.MaxAge = config.Conf.Lumberjacks[level.String()].MaxAge
+		lumber.MaxAge = MaxAge
 	}
 
 	if Compress {
-		lumber.Compress = config.Conf.Lumberjacks[level.String()].Compress
+		lumber.Compress = Compress
 	}
 
 	return lumber
